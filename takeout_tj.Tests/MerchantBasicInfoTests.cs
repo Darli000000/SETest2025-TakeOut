@@ -206,8 +206,8 @@ namespace takeout_tj.Tests
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(20000, result.StatusCode);
-            //Assert.AreEqual("ÃÜÂë´íÎó", msg);
-            Assert.That(msg, Is.EqualTo("ÃÜÂë´íÎó"), "µÇÂ¼Ê§°ÜĞÅÏ¢Ó¦¸ÃÎª 'ÃÜÂë´íÎó'");
+            Assert.AreEqual("ÃÜÂë´íÎó", msg);
+            //Assert.That(msg, Is.EqualTo("ÃÜÂë´íÎó"), "µÇÂ¼Ê§°ÜĞÅÏ¢Ó¦¸ÃÎª 'ÃÜÂë´íÎó'");
         }
 
         [Test]
@@ -280,6 +280,7 @@ namespace takeout_tj.Tests
             var address = _controller.GetType()
                 .GetMethod("GetMerchantAddress", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                 .Invoke(_controller, new object[] { merchant.MerchantId }) as string;
+
 
             Assert.AreEqual("µØÖ·1", address);
         }
