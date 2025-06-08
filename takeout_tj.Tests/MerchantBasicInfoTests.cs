@@ -1,4 +1,4 @@
-using NUnit.Framework;
+ï»¿using NUnit.Framework;
 using takeout_tj.Controllers;
 using takeout_tj.Data;
 using takeout_tj.DTO;
@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using Moq;
 using System;
+using System.Text;
 
 namespace takeout_tj.Tests
 {
@@ -36,7 +37,7 @@ namespace takeout_tj.Tests
 
             _context = new ApplicationDbContext(options);
 
-            _context.Database.OpenConnection();  // **ÕâÊÇµÚ33ĞĞ 
+            _context.Database.OpenConnection();  // **è¿™æ˜¯ç¬¬33è¡Œ 
             _context.Database.EnsureCreated();   
                         
             var merchantService = new MerchantService(_context);
@@ -52,7 +53,7 @@ namespace takeout_tj.Tests
             {
                 try
                 {
-                    // ·ÃÎÊ Database ÊôĞÔÀ´¼ì²âÊÇ·ñÒÑ±»ÊÍ·Å
+                    // è®¿é—® Database å±æ€§æ¥æ£€æµ‹æ˜¯å¦å·²è¢«é‡Šæ”¾
                     var _ = _context.Database;
 
                     _context.Database.EnsureDeleted();
@@ -60,11 +61,11 @@ namespace takeout_tj.Tests
                 }
                 catch (ObjectDisposedException)
                 {
-                    // ÒÑ±»ÊÍ·Å£¬ÎŞĞèÔÙ´¦Àí
+                    // å·²è¢«é‡Šæ”¾ï¼Œæ— éœ€å†å¤„ç†
                 }
             }
 
-            _connection?.Dispose();  // ÊÍ·ÅÄÚ´æÊı¾İ¿âÁ¬½Ó
+            _connection?.Dispose();  // é‡Šæ”¾å†…å­˜æ•°æ®åº“è¿æ¥
         }
 
         [Test]
@@ -74,10 +75,10 @@ namespace takeout_tj.Tests
             var dto = new MerchantDBDto
             {
                 Password = "123456",
-                MerchantName = "²âÊÔÉÌ¼Ò",
-                MerchantAddress = "²âÊÔµØÖ·",
+                MerchantName = "æµ‹è¯•å•†å®¶",
+                MerchantAddress = "æµ‹è¯•åœ°å€",
                 Contact = "123456789",
-                DishType = "ÖĞ²Í",
+                DishType = "ä¸­é¤",
                 TimeforOpenBusiness = 3600,
                 TimeforCloseBusiness = 7200,
                 WalletPassword = "wallet123"
@@ -95,7 +96,7 @@ namespace takeout_tj.Tests
 
             // Assert
             Assert.IsNotNull(data);
-            Assert.AreEqual("×¢²á³É¹¦", msg);
+            Assert.AreEqual("æ³¨å†ŒæˆåŠŸ", msg);
             Assert.IsTrue(data > 0);
         }
 
@@ -103,14 +104,14 @@ namespace takeout_tj.Tests
         public void InitMerchant_ShouldReturnError_WhenSaveFails()
         {
             // Arrange
-            _context.Dispose(); // Ç¿ÖÆÖÆÔìÒì³£
+            _context.Dispose(); // å¼ºåˆ¶åˆ¶é€ å¼‚å¸¸
             var dto = new MerchantDBDto
             {
                 Password = "123456",
-                MerchantName = "´íÎóÉÌ¼Ò",
-                MerchantAddress = "´íÎóµØÖ·",
+                MerchantName = "é”™è¯¯å•†å®¶",
+                MerchantAddress = "é”™è¯¯åœ°å€",
                 Contact = "000",
-                DishType = "ÀàĞÍ",
+                DishType = "ç±»å‹",
                 TimeforOpenBusiness = 3600,
                 TimeforCloseBusiness = 7200,
                 WalletPassword = "123"
@@ -126,21 +127,21 @@ namespace takeout_tj.Tests
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(30000, result.StatusCode);
-            StringAssert.Contains("´´½¨Òì³£", msg);
+            StringAssert.Contains("åˆ›å»ºå¼‚å¸¸", msg);
         }
 
         [Test]
         public void Login_ShouldReturnOk_WhenCredentialsCorrect()
         {
-            // Arrange: ²åÈëÒ»¸öÉÌ¼Ò
+            // Arrange: æ’å…¥ä¸€ä¸ªå•†å®¶
             var merchant = new MerchantDB
             {
                 MerchantId = 123,
                 Password = "pwd123",
-                MerchantName = "µÇÂ¼²âÊÔÉÌ¼Ò",
-                MerchantAddress = "µØÖ·",
+                MerchantName = "ç™»å½•æµ‹è¯•å•†å®¶",
+                MerchantAddress = "åœ°å€",
                 Contact = "111",
-                DishType = "ÃæÊ³",
+                DishType = "é¢é£Ÿ",
                 TimeforOpenBusiness = 3600,
                 TimeforCloseBusiness = 7200,
                 Wallet = 0.00m,
@@ -172,15 +173,15 @@ namespace takeout_tj.Tests
         [Test]
         public void Login_ShouldReturnError_WhenCredentialsWrong()
         {
-            // Arrange: ²åÈëÒ»¸öÉÌ¼Ò
+            // Arrange: æ’å…¥ä¸€ä¸ªå•†å®¶
             var merchant = new MerchantDB
             {
                 MerchantId = 456,
                 Password = "correct_pwd",
-                MerchantName = "´íÎóÃÜÂë²âÊÔÉÌ¼Ò",
-                MerchantAddress = "µØÖ·",
+                MerchantName = "é”™è¯¯å¯†ç æµ‹è¯•å•†å®¶",
+                MerchantAddress = "åœ°å€",
                 Contact = "111",
-                DishType = "ÉÕ¿¾",
+                DishType = "çƒ§çƒ¤",
                 TimeforOpenBusiness = 3600,
                 TimeforCloseBusiness = 36000,
                 Wallet = 0.00m,
@@ -206,8 +207,17 @@ namespace takeout_tj.Tests
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(20000, result.StatusCode);
-            Assert.AreEqual("ÃÜÂë´íÎó", msg);
-            //Assert.That(msg, Is.EqualTo("ÃÜÂë´íÎó"), "µÇÂ¼Ê§°ÜĞÅÏ¢Ó¦¸ÃÎª 'ÃÜÂë´íÎó'");
+            string original = "å¯†ç é”™è¯¯";
+
+            // âœ… å°† UTF-16 å­—ç¬¦ä¸²ç¼–ç ä¸º UTF-8 å­—èŠ‚æ•°ç»„
+            byte[] utf8Bytes = Encoding.UTF8.GetBytes(original);
+
+            // âœ… å†å°† UTF-8 å­—èŠ‚æ•°ç»„è§£ç ä¸º UTF-16 å­—ç¬¦ä¸²ï¼ˆ.NET é»˜è®¤å­—ç¬¦ä¸²ï¼‰
+            string utf8String = Encoding.UTF8.GetString(utf8Bytes);
+
+            //Console.WriteLine(utf8String); // è¾“å‡ºï¼šå¯†ç é”™è¯¯
+            Assert.AreEqual(utf8String, msg);
+            //Assert.That(msg, Is.EqualTo("å¯†ç é”™è¯¯"), "ç™»å½•å¤±è´¥ä¿¡æ¯åº”è¯¥ä¸º 'å¯†ç é”™è¯¯'");
         }
 
         [Test]
@@ -217,10 +227,10 @@ namespace takeout_tj.Tests
             var merchant = new MerchantDB
             {
                 Password = "pwd",
-                MerchantName = "²âÊÔÉÌ¼Ò",
-                MerchantAddress = "²âÊÔµØÖ·",
+                MerchantName = "æµ‹è¯•å•†å®¶",
+                MerchantAddress = "æµ‹è¯•åœ°å€",
                 Contact = "123456",
-                DishType = "ÖĞ²Í",
+                DishType = "ä¸­é¤",
                 TimeforOpenBusiness = 3600,
                 TimeforCloseBusiness = 7200,
                 Wallet = 100,
@@ -240,8 +250,8 @@ namespace takeout_tj.Tests
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(200, result.StatusCode);
-            Assert.AreEqual("²âÊÔÉÌ¼Ò", name);
-            Assert.AreEqual("»ñÈ¡³É¹¦", msg);
+            Assert.AreEqual("æµ‹è¯•å•†å®¶", name);
+            Assert.AreEqual("è·å–æˆåŠŸ", msg);
         }
 
         [Test]
@@ -256,7 +266,7 @@ namespace takeout_tj.Tests
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(20000, result.StatusCode);
-            Assert.AreEqual("ÉÌ»§Î´ÕÒµ½", msg);
+            Assert.AreEqual("å•†æˆ·æœªæ‰¾åˆ°", msg);
         }
 
         [Test]
@@ -265,10 +275,10 @@ namespace takeout_tj.Tests
             var merchant = new MerchantDB
             {
                 Password = "pwd",
-                MerchantName = "²âÊÔÉÌ¼Ò",
-                MerchantAddress = "µØÖ·1",
+                MerchantName = "æµ‹è¯•å•†å®¶",
+                MerchantAddress = "åœ°å€1",
                 Contact = "123456",
-                DishType = "ÖĞ²Í",
+                DishType = "ä¸­é¤",
                 TimeforOpenBusiness = 3600,
                 TimeforCloseBusiness = 7200,
                 Wallet = 100,
@@ -282,7 +292,7 @@ namespace takeout_tj.Tests
                 .Invoke(_controller, new object[] { merchant.MerchantId }) as string;
 
 
-            Assert.AreEqual("µØÖ·1", address);
+            Assert.AreEqual("åœ°å€1", address);
         }
 
         [Test]
@@ -301,27 +311,27 @@ namespace takeout_tj.Tests
             var merchant = new MerchantDB
             {
                 Password = "pwd",
-                MerchantName = "²âÊÔÉÌ¼Ò",
-                MerchantAddress = "²âÊÔµØÖ·",
+                MerchantName = "æµ‹è¯•å•†å®¶",
+                MerchantAddress = "æµ‹è¯•åœ°å€",
                 Contact = "123456",
-                DishType = "ÖĞ²Í",
+                DishType = "ä¸­é¤",
                 TimeforOpenBusiness = 3600,
                 TimeforCloseBusiness = 7200,
                 Wallet = 100,
                 WalletPassword = "wp"
             };
-            //var merchant = new MerchantDB { MerchantName = "Ô­Ãû", WalletPassword = "wp" };
+            //var merchant = new MerchantDB { MerchantName = "åŸå", WalletPassword = "wp" };
             _context.Merchants.Add(merchant);
             _context.SaveChanges();
 
             var dto = new MerchantDBDto
             {
-                MerchantId = 1, // ÒÑÖª·ÖÅäµÄIdÊÇ1
+                MerchantId = 1, // å·²çŸ¥åˆ†é…çš„Idæ˜¯1
                 Password = "pwd",
-                MerchantName = "ĞÂ²âÊÔÉÌ¼Ò",
-                MerchantAddress = "ĞÂ²âÊÔµØÖ·",
+                MerchantName = "æ–°æµ‹è¯•å•†å®¶",
+                MerchantAddress = "æ–°æµ‹è¯•åœ°å€",
                 Contact = "123456",
-                DishType = "ÖĞ²Í",
+                DishType = "ä¸­é¤",
                 TimeforOpenBusiness = 3600,
                 TimeforCloseBusiness = 7200,
                 Wallet = 100,
@@ -338,7 +348,7 @@ namespace takeout_tj.Tests
 
             Assert.IsNotNull(result);
             Assert.AreEqual(200, result.StatusCode);
-            Assert.AreEqual("ÓÃ»§ĞÅÏ¢¸üĞÂ³É¹¦", msg);
+            Assert.AreEqual("ç”¨æˆ·ä¿¡æ¯æ›´æ–°æˆåŠŸ", msg);
         }
 
         [Test]
@@ -354,13 +364,13 @@ namespace takeout_tj.Tests
 
             Assert.IsNotNull(result);
             Assert.AreEqual(404, result.StatusCode);
-            Assert.AreEqual("ÓÃ»§Î´ÕÒµ½", msg);
+            Assert.AreEqual("ç”¨æˆ·æœªæ‰¾åˆ°", msg);
         }
 
         [Test]
         public void EditMerchant_ShouldReturnServerError_WhenExceptionThrown()
         {
-            // Ê¹ÓÃ SQLite in-memory context
+            // ä½¿ç”¨ SQLite in-memory context
             var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
 
@@ -371,16 +381,16 @@ namespace takeout_tj.Tests
             var context = new ApplicationDbContext(options);
             context.Database.EnsureCreated();
 
-            // Ìí¼Ó²âÊÔÊı¾İ
+            // æ·»åŠ æµ‹è¯•æ•°æ®
             context.Merchants.Add(new MerchantDB
             {
                 MerchantId = 1,
                 Password = "pwd",
-                MerchantName = "ÉÌ¼Ò",
-                MerchantAddress = "µØÖ·",
+                MerchantName = "å•†å®¶",
+                MerchantAddress = "åœ°å€",
                 Contact = "123456",
                 CouponType = 0,
-                DishType = "ÖĞ²Í",
+                DishType = "ä¸­é¤",
                 TimeforOpenBusiness = 3600,
                 TimeforCloseBusiness = 7200,
                 WalletPassword = "wallet"
@@ -389,14 +399,14 @@ namespace takeout_tj.Tests
 
             var controller = new MerchantController(context, new MerchantService(context), "uploads");
 
-            // Ä£Äâ context Å×Òì³££º½« context.Dispose ºóÔÙ·ÃÎÊ£¨»á³öÒì³££©
+            // æ¨¡æ‹Ÿ context æŠ›å¼‚å¸¸ï¼šå°† context.Dispose åå†è®¿é—®ï¼ˆä¼šå‡ºå¼‚å¸¸ï¼‰
             context.Dispose();
 
             var dto = new MerchantDBDto
             {
                 MerchantId = 1,
                 Password = "newpwd",
-                MerchantName = "ĞÂÉÌ¼Ò"
+                MerchantName = "æ–°å•†å®¶"
             };
 
             var result = controller.EditMerchant(dto) as ObjectResult;
@@ -407,11 +417,11 @@ namespace takeout_tj.Tests
 
             Assert.IsNotNull(result);
             Assert.AreEqual(30000, result.StatusCode);
-            StringAssert.Contains("¸üĞÂÒì³£", msg);
+            StringAssert.Contains("æ›´æ–°å¼‚å¸¸", msg);
         }
 
 
-        /* ºÍwalletÏà¹ØµÄ²âÊÔ(ÓÃÀı·¶Î§Íâ£¬¿ÉºöÂÔ) */
+        /* å’Œwalletç›¸å…³çš„æµ‹è¯•(ç”¨ä¾‹èŒƒå›´å¤–ï¼Œå¯å¿½ç•¥) */
         [Test]
         public void WalletRecharge_ShouldReturnNotFound_WhenMerchantMissing()
         {
@@ -423,7 +433,7 @@ namespace takeout_tj.Tests
 
             Assert.IsNotNull(result);
             Assert.AreEqual(404, result.StatusCode);
-            StringAssert.Contains("Î´ÕÒµ½", msg);
+            StringAssert.Contains("æœªæ‰¾åˆ°", msg);
         }
 
         [Test]
@@ -432,10 +442,10 @@ namespace takeout_tj.Tests
             var merchant = new MerchantDB
             {
                 Password = "pwd",
-                MerchantName = "²âÊÔÉÌ¼Ò",
-                MerchantAddress = "²âÊÔµØÖ·",
+                MerchantName = "æµ‹è¯•å•†å®¶",
+                MerchantAddress = "æµ‹è¯•åœ°å€",
                 Contact = "123456",
-                DishType = "ÖĞ²Í",
+                DishType = "ä¸­é¤",
                 TimeforOpenBusiness = 3600,
                 TimeforCloseBusiness = 7200,
                 Wallet = 50,
@@ -444,7 +454,7 @@ namespace takeout_tj.Tests
             _context.Merchants.Add(merchant);
             _context.SaveChanges();
 
-            var result = _controller.WalletRecharge(1, 0) as ObjectResult;  // ÒÑÖªÉÌ¼ÒIdÎª1
+            var result = _controller.WalletRecharge(1, 0) as ObjectResult;  // å·²çŸ¥å•†å®¶Idä¸º1
             var json = JsonSerializer.Serialize(result.Value);
             var doc = JsonDocument.Parse(json);
 
@@ -453,7 +463,7 @@ namespace takeout_tj.Tests
 
             Assert.IsNotNull(result);
             Assert.AreEqual(200, result.StatusCode);
-            StringAssert.Contains("¸üĞÂ³É¹¦", msg);
+            StringAssert.Contains("æ›´æ–°æˆåŠŸ", msg);
             Assert.AreEqual(50, data);
         }
 
@@ -463,10 +473,10 @@ namespace takeout_tj.Tests
             var merchant1 = new MerchantDB
             {
                 Password = "pwd",
-                MerchantName = "²âÊÔÉÌ¼Ò1",
-                MerchantAddress = "²âÊÔµØÖ·1",
+                MerchantName = "æµ‹è¯•å•†å®¶1",
+                MerchantAddress = "æµ‹è¯•åœ°å€1",
                 Contact = "123456",
-                DishType = "ÖĞ²Í",
+                DishType = "ä¸­é¤",
                 TimeforOpenBusiness = 3600,
                 TimeforCloseBusiness = 7200,
                 Wallet = 50,
@@ -475,10 +485,10 @@ namespace takeout_tj.Tests
             var merchant2 = new MerchantDB
             {
                 Password = "pwd",
-                MerchantName = "²âÊÔÉÌ¼Ò2",
-                MerchantAddress = "²âÊÔµØÖ·2",
+                MerchantName = "æµ‹è¯•å•†å®¶2",
+                MerchantAddress = "æµ‹è¯•åœ°å€2",
                 Contact = "123456",
-                DishType = "ÖĞ²Í",
+                DishType = "ä¸­é¤",
                 TimeforOpenBusiness = 3600,
                 TimeforCloseBusiness = 7200,
                 Wallet = 100,
@@ -489,7 +499,7 @@ namespace takeout_tj.Tests
             _context.SaveChanges();
 
 
-            // ÎªÉÌ¼Ò2³äÇ®50Ôª£¬Ó¦·µ»Ø150Ôª
+            // ä¸ºå•†å®¶2å……é’±50å…ƒï¼Œåº”è¿”å›150å…ƒ
             var result = _controller.WalletRecharge(2, 50) as ObjectResult;
             var json = JsonSerializer.Serialize(result.Value);
             var doc = JsonDocument.Parse(json);
@@ -499,7 +509,7 @@ namespace takeout_tj.Tests
 
             Assert.IsNotNull(result);
             Assert.AreEqual(200, result.StatusCode);
-            StringAssert.Contains("¸üĞÂ³É¹¦", msg);
+            StringAssert.Contains("æ›´æ–°æˆåŠŸ", msg);
             Assert.AreEqual(150, data);
         }
 
@@ -514,7 +524,7 @@ namespace takeout_tj.Tests
 
             Assert.IsNotNull(result);
             Assert.AreEqual(404, result.StatusCode);
-            StringAssert.Contains("Î´ÕÒµ½", msg);
+            StringAssert.Contains("æœªæ‰¾åˆ°", msg);
         }
 
         [Test]
@@ -523,10 +533,10 @@ namespace takeout_tj.Tests
             var merchant = new MerchantDB
             {
                 Password = "pwd",
-                MerchantName = "²âÊÔÉÌ¼Ò1",
-                MerchantAddress = "²âÊÔµØÖ·1",
+                MerchantName = "æµ‹è¯•å•†å®¶1",
+                MerchantAddress = "æµ‹è¯•åœ°å€1",
                 Contact = "123456",
-                DishType = "ÖĞ²Í",
+                DishType = "ä¸­é¤",
                 TimeforOpenBusiness = 3600,
                 TimeforCloseBusiness = 7200,
                 Wallet = 200,
@@ -544,7 +554,7 @@ namespace takeout_tj.Tests
 
             Assert.IsNotNull(result);
             Assert.AreEqual(200, result.StatusCode);
-            StringAssert.Contains("¸üĞÂ³É¹¦", msg);
+            StringAssert.Contains("æ›´æ–°æˆåŠŸ", msg);
             Assert.AreEqual(200, data);
         }
 
@@ -554,10 +564,10 @@ namespace takeout_tj.Tests
             var merchant = new MerchantDB
             {
                 Password = "pwd",
-                MerchantName = "²âÊÔÉÌ¼Ò1",
-                MerchantAddress = "²âÊÔµØÖ·1",
+                MerchantName = "æµ‹è¯•å•†å®¶1",
+                MerchantAddress = "æµ‹è¯•åœ°å€1",
                 Contact = "123456",
-                DishType = "ÖĞ²Í",
+                DishType = "ä¸­é¤",
                 TimeforOpenBusiness = 3600,
                 TimeforCloseBusiness = 7200,
                 Wallet = 300,
@@ -575,7 +585,7 @@ namespace takeout_tj.Tests
 
             Assert.IsNotNull(result);
             Assert.AreEqual(200, result.StatusCode);
-            StringAssert.Contains("¸üĞÂ³É¹¦", msg);
+            StringAssert.Contains("æ›´æ–°æˆåŠŸ", msg);
             Assert.AreEqual(200, data);
         }
 
@@ -586,11 +596,11 @@ namespace takeout_tj.Tests
             var merchant = new MerchantDB
             {
                 Password = "pwd",
-                MerchantName = "²âÊÔÉÌ¼Ò",
-                MerchantAddress = "²âÊÔµØÖ·",
+                MerchantName = "æµ‹è¯•å•†å®¶",
+                MerchantAddress = "æµ‹è¯•åœ°å€",
                 Contact = "123456",
                 CouponType = 0,
-                DishType = "ÖĞ²Í",
+                DishType = "ä¸­é¤",
                 TimeforOpenBusiness = 3600,
                 TimeforCloseBusiness = 7200,
                 Wallet = 100,
@@ -599,7 +609,7 @@ namespace takeout_tj.Tests
             _context.Merchants.Add(merchant);
             _context.SaveChanges();
 
-            // Ä£Äâ context Å×Òì³££º½« context.Dispose ºóÔÙ·ÃÎÊ£¨»á³öÒì³££©
+            // æ¨¡æ‹Ÿ context æŠ›å¼‚å¸¸ï¼šå°† context.Dispose åå†è®¿é—®ï¼ˆä¼šå‡ºå¼‚å¸¸ï¼‰
             _context.Dispose();
 
             // Act
@@ -612,7 +622,7 @@ namespace takeout_tj.Tests
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(30000, result.StatusCode);
-            StringAssert.Contains("ÌáÏÖÒì³£", msg);
+            StringAssert.Contains("æç°å¼‚å¸¸", msg);
         }
 
     }
