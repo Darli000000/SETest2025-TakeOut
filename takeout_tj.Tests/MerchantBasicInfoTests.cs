@@ -84,6 +84,7 @@ namespace takeout_tj.Tests
             };
 
 
+
             // Act
             var result = _controller.InitMerchant(dto) as OkObjectResult;
             var json = JsonSerializer.Serialize(result.Value);
