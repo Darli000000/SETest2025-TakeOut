@@ -1,0 +1,29 @@
+name: .NET CI (Test Project Only)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.100'
+
+    - name: Restore dependencies (Tests)
+      run: dotnet restore takeout_tj.Tests/takeout_tj.Tests.sln
+
+    - name: Build Tests (includes backend project)
+      run: dotnet build takeout_tj.Tests/takeout_tj.Tests.sln --no-restore --configuration Release
+
+    - name: Run NUnit Tests
+      run: dotnet test takeout_tj.Tests/takeout_tj.Tests.sln --no-build --configuration Release --verbosity normal
