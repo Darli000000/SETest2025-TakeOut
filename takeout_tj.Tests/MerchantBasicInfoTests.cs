@@ -206,7 +206,8 @@ namespace takeout_tj.Tests
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(20000, result.StatusCode);
-            Assert.AreEqual("ÃÜÂë´íÎó", msg);
+            //Assert.AreEqual("ÃÜÂë´íÎó", msg);
+            Assert.That(msg, Is.EqualTo("ÃÜÂë´íÎó"), "µÇÂ¼Ê§°ÜĞÅÏ¢Ó¦¸ÃÎª 'ÃÜÂë´íÎó'");
         }
 
         [Test]
